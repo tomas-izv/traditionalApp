@@ -1,4 +1,8 @@
 <?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 try {
     $connection = new \PDO(
       'mysql:host=localhost;dbname=productdatabase',
@@ -9,13 +13,14 @@ try {
         PDO::MYSQL_ATTR_INIT_COMMAND => 'set names utf8')
     );
 } catch(PDOException $e) {
-    echo 'no connection';
+    header('Location:..');
     exit;
 }
 if(isset($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    echo 'no id';
+    $url = '.?op=showproduct&result=noid';
+    header('Location: ' . $url);
     exit;
 }
 $sql = 'select * from product where id = :id';
@@ -24,15 +29,20 @@ $parameters = ['id' => $id];
 foreach($parameters as $nombreParametro => $valorParametro) {
     $sentence->bindValue($nombreParametro, $valorParametro);
 }
-if(!$sentence->execute()){
-    echo 'no sql';
+try {
+    $sentence->execute();
+} catch(PDOException $e) {
+    $url = '.?op=showproduct&result=nosql';
+    header('Location: ' . $url);
     exit;
 }
-$sentence->execute();
+
 if(!$fila = $sentence->fetch()) {
-    echo 'no data';
+    $url = '.?op=showproduct&result=nofetch';
+    header('Location: ' . $url);
     exit;
 }
+
 $connection = null;
 ?>
 <!doctype html>

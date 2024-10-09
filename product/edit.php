@@ -1,9 +1,15 @@
 <?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 if(!isset($_SESSION['user'])) {
-    header('.');
+    header('Location:.');
     exit;
 }
+$user = $_SESSION['user'];
+
 try {
     $connection = new \PDO(
       'mysql:host=localhost;dbname=productdatabase',
@@ -14,9 +20,10 @@ try {
         PDO::MYSQL_ATTR_INIT_COMMAND => 'set names utf8')
     );
 } catch(PDOException $e) {
-    echo 'no connection';
+    header('Location: ..');
     exit;
 }
+
 if(isset($_GET['id'])) {
     $id = $_GET['id'];
 } else {
@@ -24,19 +31,49 @@ if(isset($_GET['id'])) {
     header('Location: ' . $url);
     exit;
 }
+
+if(($user === 'even' && $id % 2 != 0) ||
+    ($user === 'odd' && $id % 2 == 0)) {
+    header('Location: .?op=editproduct&result=evenodd');
+    exit;
+}
+
 $sql = 'select * from product where id = :id';
 $sentence = $connection->prepare($sql);
 $parameters = ['id' => $id];
 foreach($parameters as $nombreParametro => $valorParametro) {
     $sentence->bindValue($nombreParametro, $valorParametro);
 }
-if(!$sentence->execute()){
-    echo 'no sql';
+
+try {
+    $sentence->execute();
+    $row = $sentence->fetch();
+} catch(PDOException $e) {
+    header('Location:.');
     exit;
 }
-if(!$fila = $sentence->fetch()) {
-    echo 'no data';
+
+if($row == null) {
+    header('Location: .');
     exit;
+}
+
+$name = '';
+$price = '';
+if(isset($_SESSION['old']['name'])) {
+    $name = $_SESSION['old']['name'];
+    unset($_SESSION['old']['name']);
+}
+if(isset($_SESSION['old']['price'])) {
+    $price = $_SESSION['old']['price'];
+    unset($_SESSION['old']['price']);
+}
+$id = $row['id'];
+if($name == '') {
+    $name = $row['name'];
+}
+if($price == '') {
+    $price = $row['price'];
 }
 $connection = null;
 ?>
@@ -71,17 +108,34 @@ $connection = null;
                 </div>
             </div>
             <div class="container">
+            <?php
+                if(isset($_GET['op']) && isset($_GET['result'])) {
+                    if($_GET['result'] > 0) {
+                        ?>
+                        <div class="alert alert-primary" role="alert">
+                            result: <?= $_GET['op'] . ' ' . $_GET['result'] ?>
+                        </div>
+                        <?php 
+                    } else {
+                        ?>
+                        <div class="alert alert-danger" role="alert">
+                            result: <?= $_GET['op'] . ' ' . $_GET['result'] ?>
+                        </div>
+                        <?php
+                        }
+                }
+                ?>
                 <div>
                     <form action="update.php" method="post">
                         <div class="form-group">
                             <label for="name">product name</label>
-                            <input value="<?= $fila['name'] ?>" required type="text" class="form-control" id="name" name="name" placeholder="product name">
+                            <input value="<?= $name ?>" required type="text" class="form-control" id="name" name="name" placeholder="product name">
                         </div>
                         <div class="form-group">
                             <label for="price">product price</label>
-                            <input value="<?= $fila['price'] ?>" required type="number" step="0.001" class="form-control" id="price" name="price" placeholder="product price">
+                            <input value="<?= $price ?>" required type="number" step="0.001" class="form-control" id="price" name="price" placeholder="product price">
                         </div>
-                        <input type="hidden" name="id" value="<?= $fila['id'] ?>" />
+                        <input type="hidden" name="id" value="<?= $id ?>" />
                         <button type="submit" class="btn btn-primary">edit</button>
                     </form>
                 </div>

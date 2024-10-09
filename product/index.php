@@ -1,8 +1,15 @@
 <?php
+
 ini_set('display_errors', 1);
-error_reporting(E_ALL);
+error_reporting(E_ALL); 
 
 session_start();
+
+$user = null;
+if(isset($_SESSION['user'])) {
+    $user = $_SESSION['user'];
+}
+
 try {
     $connection = new PDO(
       'mysql:host=localhost;dbname=productdatabase',
@@ -13,13 +20,16 @@ try {
         PDO::MYSQL_ATTR_INIT_COMMAND => 'set names utf8')
     );
 } catch(PDOException $e) {
-    echo 'no connection';
+    header('Location:..');
     exit;
 }
 $sql = 'select * from product order by name, id';
-$sentence = $connection->prepare($sql);
-if(!$sentence->execute()) {
-    echo 'no sql';
+try {
+    $sentence = $connection->prepare($sql);
+    $sentence->execute();
+} catch(PDOException $e) {
+    //echo '<pre>' . var_export($e, true) . '</pre>';
+    header('Location:..');
     exit;
 }
 ?>
@@ -56,11 +66,19 @@ if(!$sentence->execute()) {
             <div class="container">
                 <?php
                 if(isset($_GET['op']) && isset($_GET['result'])) {
-                    ?>
-                    <div class="alert alert-primary" role="alert">
-                        result: <?= $_GET['op'] . ' ' . $_GET['result'] ?>
-                    </div>
-                    <?php
+                    if($_GET['result'] > 0) {
+                        ?>
+                        <div class="alert alert-primary" role="alert">
+                            result: <?= $_GET['op'] . ' ' . $_GET['result'] ?>
+                        </div>
+                        <?php 
+                    } else {
+                        ?>
+                        <div class="alert alert-danger" role="alert">
+                            result: <?= $_GET['op'] . ' ' . $_GET['result'] ?>
+                        </div>
+                        <?php
+                        }
                 }
                 ?>
                 <div class="row">
@@ -92,10 +110,17 @@ if(!$sentence->execute()) {
                                     <td><?= $fila['name']; ?></td>
                                     <td><?= $fila['price']; ?></td>
                                     <?php
-                                    if(isset($_SESSION['user'])) {
+                                    //if(isset($_SESSION['user'])) {
+                                    if(($user === 'even' && $fila['id'] % 2 == 0) || 
+                                            ($user === 'odd' && $fila['id'] % 2 != 0)) {
                                         ?>
-                                        <td><a href="destroy.php?id=<?= $fila['id'] ?>" class = "borrar">delete</a></td>
+                                        <td><a href="destroy.php?id=<?= $fila['id'] ?>" class="borrar">delete</a></td>
                                         <td><a href="edit.php?id=<?= $fila['id'] ?>">edit</a></td>
+                                        <?php
+                                    } elseif($user != null) {
+                                        ?>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
                                         <?php
                                     }
                                     ?>

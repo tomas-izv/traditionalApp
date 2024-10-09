@@ -1,13 +1,16 @@
 <?php
-// control de ssión
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 if(!isset($_SESSION['user'])) {
-    header('.');
+    header('Location:.');
     exit;
 }
-//lectura de datos
-$price = '';
+
 $name = '';
+$price = '';
 if(isset($_SESSION['old']['name'])) {
     $name = $_SESSION['old']['name'];
     unset($_SESSION['old']['name']);
@@ -49,12 +52,20 @@ if(isset($_SESSION['old']['price'])) {
             </div>
             <div class="container">
                 <?php
-                if(isset($_GET['op'])) {
-                    ?>
-                    <div class="alert alert-primary" role="alert">
-                        result: <?= $_GET['op'] ?>
-                    </div>
-                    <?php
+                if(isset($_GET['op']) && isset($_GET['result'])) {
+                    if($_GET['result'] > 0) {
+                        ?>
+                        <div class="alert alert-primary" role="alert">
+                            result: <?= $_GET['op'] . ' ' . $_GET['result'] ?>
+                        </div>
+                        <?php 
+                    } else {
+                        ?>
+                        <div class="alert alert-danger" role="alert">
+                            result: <?= $_GET['op'] . ' ' . $_GET['result'] ?>
+                        </div>
+                        <?php
+                        }
                 }
                 ?>
                 <div>

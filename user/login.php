@@ -1,5 +1,5 @@
 <?php
 session_start();
-$_SESSION['user'] = true;
+$_SESSION['user'] = $_GET['user'];
 $url = '..?op=login&result=ok';
 header('Location: ' . $url);
