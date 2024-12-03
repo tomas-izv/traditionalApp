@@ -23,7 +23,7 @@ try {
     header('Location:..');
     exit;
 }
-$sql = 'select * from product order by name, id';
+$sql = 'select * from pokemon order by name, id';
 try {
     $sentence = $connection->prepare($sql);
     $sentence->execute();
@@ -52,7 +52,7 @@ try {
                         <a class="nav-link" href="..">home</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="./">product</a>
+                        <a class="nav-link" href="./">pokemon</a>
                     </li>
                 </ul>
             </div>
@@ -60,7 +60,7 @@ try {
         <main role="main">
             <div class="jumbotron">
                 <div class="container">
-                    <h4 class="display-4">products</h4>
+                    <h4 class="display-4">pokemon</h4>
                 </div>
             </div>
             <div class="container">
@@ -82,14 +82,17 @@ try {
                 }
                 ?>
                 <div class="row">
-                    <h3>product list</h3>
+                    <h3>pokemon list</h3>
                 </div>
-                <table class="table table-striped table-hover" id="tablaProducto">
+                <table class="table table-striped table-hover" id="tablaPokemon">
                     <thead>
                         <tr>
                             <th>id</th>
                             <th>name</th>
-                            <th>price</th>
+                            <th>type</th>
+                            <th>weight</th>
+                            <th>height</th>
+                            <th>lvl</th>
                             <?php
                             if(isset($_SESSION['user'])) {
                                 ?>
@@ -106,8 +109,8 @@ try {
                             while($fila = $sentence->fetch()) {
                                 ?>
                                 <tr >
-                                    <td><?php echo $fila['id']; ?></td>
-                                    <td><?= $fila['name']; ?></td>
+                                    <td><?php echo $fila['name']; ?></td>
+                                    <td><?= $fila['type']; ?></td>
                                     <td><?= $fila['price']; ?></td>
                                     <?php
                                     //if(isset($_SESSION['user'])) {
@@ -135,7 +138,7 @@ try {
                     <?php
                     if(isset($_SESSION['user'])) {
                         ?>
-                        <a href="create.php" class="btn btn-success">add product</a>
+                        <a href="create.php" class="btn btn-success">add pokemon</a>
                         <?php
                     }
                     ?>

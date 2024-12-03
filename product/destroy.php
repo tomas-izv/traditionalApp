@@ -27,18 +27,18 @@ try {
 if(isset($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    $url = '.?op=destroyproduct&result=noid';
+    $url = '.?op=destroypokemon&result=noid';
     header('Location: ' . $url);
     exit;
 }
 
 if(($user === 'even' && $id % 2 != 0) ||
     ($user === 'odd' && $id % 2 == 0)) {
-    header('Location: .?op=destroyproduct&result=evenodd');
+    header('Location: .?op=destroypokemon&result=evenodd');
     exit;
 }
 
-$sql = 'delete from product where id = :id';
+$sql = 'delete from pokemon where id = :id';
 $sentence = $connection->prepare($sql);
 $parameters = ['id' => $id];
 foreach($parameters as $nombreParametro => $valorParametro) {
@@ -51,5 +51,5 @@ try {
     $resultado = 0;
 }
 $connection = null;
-$url = '.?op=deleteproduct&result=' . $resultado;
+$url = '.?op=deletepokemon&result=' . $resultado;
 header('Location: ' . $url);

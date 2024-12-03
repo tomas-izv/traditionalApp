@@ -10,14 +10,29 @@ if(!isset($_SESSION['user'])) {
 }
 
 $name = '';
-$price = '';
+$type = '';
+$weight = '';
+$height = '';
+$lvl = '';
 if(isset($_SESSION['old']['name'])) {
     $name = $_SESSION['old']['name'];
     unset($_SESSION['old']['name']);
 }
-if(isset($_SESSION['old']['price'])) {
-    $price = $_SESSION['old']['price'];
-    unset($_SESSION['old']['price']);
+if(isset($_SESSION['old']['type'])) {
+    $type = $_SESSION['old']['type'];
+    unset($_SESSION['old']['type']);
+}
+if(isset($_SESSION['old']['weight'])) {
+    $weight = $_SESSION['old']['weight'];
+    unset($_SESSION['old']['weight']);
+}
+if(isset($_SESSION['old']['height'])) {
+    $height = $_SESSION['old']['height'];
+    unset($_SESSION['old']['height']);
+}
+if(isset($_SESSION['old']['lvl'])) {
+    $lvl = $_SESSION['old']['lvl'];
+    unset($_SESSION['old']['lvl']);
 }
 ?>
 <!doctype html>
@@ -39,7 +54,7 @@ if(isset($_SESSION['old']['price'])) {
                         <a class="nav-link" href="..">home</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="./">product</a>
+                        <a class="nav-link" href="./">pokemon</a>
                     </li>
                 </ul>
             </div>
@@ -47,7 +62,7 @@ if(isset($_SESSION['old']['price'])) {
         <main role="main">
             <div class="jumbotron">
                 <div class="container">
-                    <h4 class="display-4">products</h4>
+                    <h4 class="display-4">pokemon</h4>
                 </div>
             </div>
             <div class="container">
@@ -71,12 +86,24 @@ if(isset($_SESSION['old']['price'])) {
                 <div>
                     <form action="store.php" method="post">
                         <div class="form-group">
-                            <label for="name">product name</label>
-                            <input value="<?= $name ?>" required type="text" class="form-control" id="name" name="name" placeholder="product name">
+                            <label for="name">pokemon name</label>
+                            <input value="<?= $name ?>" required type="text" class="form-control" id="name" name="name" placeholder="pokemon name">
                         </div>
                         <div class="form-group">
-                            <label for="price">product price</label>
-                            <input value="<?= $price ?>" required type="number" step="0.001" class="form-control" id="price" name="price" placeholder="product price">
+                            <label for="type">pokemon type</label>
+                            <input value="<?= $type ?>" required type="text" class="form-control" id="type" name="type" placeholder="pokemon type">
+                        </div>
+                        <div class="form-group">
+                            <label for="weight">pokemon weight</label>
+                            <input value="<?= $weight ?>" required type="decimal" class="form-control" id="weight" name="weight" placeholder="pokemon weight">
+                        </div>
+                        <div class="form-group">
+                            <label for="height">pokemon height</label>
+                            <input value="<?= $height ?>" required type="decimal" class="form-control" id="height" name="height" placeholder="pokemon height">
+                        </div>
+                        <div class="form-group">
+                            <label for="lvl">pokemon lvl</label>
+                            <input value="<?= $lvl ?>" required type="integer" class="form-control" id="lvl" name="lvl" placeholder="pokemon lvl">
                         </div>
                         <button type="submit" class="btn btn-primary">add</button>
                     </form>
