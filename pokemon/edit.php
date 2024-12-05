@@ -8,32 +8,85 @@ if(!isset($_SESSION['user'])) {
     header('Location:.');
     exit;
 }
+$name = isset($_SESSION['old']['name']) ? $_SESSION['old']['name'] : '';
+$lvl = isset($_SESSION['old']['lvl']) ? $_SESSION['old']['lvl'] : '';
+$type = isset($_SESSION['old']['type']) ? $_SESSION['old']['type'] : '';
+$user = $_SESSION['user'];
 
-$name = '';
-$type = '';
-$weight = '';
-$height = '';
-$lvl = '';
-if(isset($_SESSION['old']['name'])) {
-    $name = $_SESSION['old']['name'];
-    unset($_SESSION['old']['name']);
+try {
+    $connection = new \PDO(
+      'mysql:host=localhost;dbname=pokemondatabase',
+      'pokemon_user',
+      'pokemon_user',
+      array(
+        PDO::ATTR_PERSISTENT => true,
+        PDO::MYSQL_ATTR_INIT_COMMAND => 'set names utf8')
+    );
+} catch(PDOException $e) {
+    header('Location: ..');
+    exit;
 }
-if(isset($_SESSION['old']['type'])) {
-    $type = $_SESSION['old']['type'];
-    unset($_SESSION['old']['type']);
+
+if(isset($_GET['id'])) {
+    $id = $_GET['id'];
+} else {
+    $url = '.?op=editpokemon&result=noid';
+    header('Location: ' . $url);
+    exit;
 }
-if(isset($_SESSION['old']['weight'])) {
-    $weight = $_SESSION['old']['weight'];
-    unset($_SESSION['old']['weight']);
+
+if(($user === 'even' && $id % 2 != 0) ||
+    ($user === 'odd' && $id % 2 == 0)) {
+    header('Location: .?op=editpokemon&result=evenodd');
+    exit;
 }
-if(isset($_SESSION['old']['height'])) {
-    $height = $_SESSION['old']['height'];
-    unset($_SESSION['old']['height']);
+
+$sql = 'select * from pokemon where id = :id';
+$sentence = $connection->prepare($sql);
+$parameters = ['id' => $id];
+foreach($parameters as $nombreParametro => $valorParametro) {
+    $sentence->bindValue($nombreParametro, $valorParametro);
 }
-if(isset($_SESSION['old']['lvl'])) {
-    $lvl = $_SESSION['old']['lvl'];
-    unset($_SESSION['old']['lvl']);
+
+try {
+    $sentence->execute();
+    $row = $sentence->fetch();
+} catch(PDOException $e) {
+    header('Location:.');
+    exit;
 }
+
+if($row == null) {
+    header('Location: .');
+    exit;
+}
+
+// $name = '';
+// $lvl = '';
+// $type = '';
+// if(isset($_SESSION['old']['name'])) {
+//     $name = $_SESSION['old']['name'];
+//     unset($_SESSION['old']['name']);
+// }
+// if(isset($_SESSION['old']['lvl'])) {
+//     $lvl = $_SESSION['old']['lvl'];
+//     unset($_SESSION['old']['lvl']);
+// }
+// if(isset($_SESSION['old']['type'])) {
+//     $type = $_SESSION['old']['type'];
+//     unset($_SESSION['old']['type']);
+// }
+$id = $row['id'];
+if($name == '') {
+    $name = $row['name'];
+}
+if($lvl == '') {
+    $lvl = $row['lvl'];
+}
+if($type == '') {
+    $type = $row['type'];
+}
+$connection = null;
 ?>
 <!doctype html>
 <html>
@@ -66,7 +119,7 @@ if(isset($_SESSION['old']['lvl'])) {
                 </div>
             </div>
             <div class="container">
-                <?php
+            <?php
                 if(isset($_GET['op']) && isset($_GET['result'])) {
                     if($_GET['result'] > 0) {
                         ?>
@@ -84,28 +137,21 @@ if(isset($_SESSION['old']['lvl'])) {
                 }
                 ?>
                 <div>
-                    <form action="store.php" method="post">
+                    <form action="update.php" method="post">
                         <div class="form-group">
                             <label for="name">pokemon name</label>
                             <input value="<?= $name ?>" required type="text" class="form-control" id="name" name="name" placeholder="pokemon name">
                         </div>
                         <div class="form-group">
+                            <label for="lvl">pokemon lvl</label>
+                            <input value="<?= $lvl ?>" required type="number" step="1" class="form-control" id="lvl" name="lvl" placeholder="pokemon lvl">
+                        </div>
+                        <div class="form-group">
                             <label for="type">pokemon type</label>
                             <input value="<?= $type ?>" required type="text" class="form-control" id="type" name="type" placeholder="pokemon type">
                         </div>
-                        <div class="form-group">
-                            <label for="weight">pokemon weight</label>
-                            <input value="<?= $weight ?>" required type="decimal" class="form-control" id="weight" name="weight" placeholder="pokemon weight">
-                        </div>
-                        <div class="form-group">
-                            <label for="height">pokemon height</label>
-                            <input value="<?= $height ?>" required type="decimal" class="form-control" id="height" name="height" placeholder="pokemon height">
-                        </div>
-                        <div class="form-group">
-                            <label for="lvl">pokemon lvl</label>
-                            <input value="<?= $lvl ?>" required type="integer" class="form-control" id="lvl" name="lvl" placeholder="pokemon lvl">
-                        </div>
-                        <button type="submit" class="btn btn-primary">add</button>
+                        <input type="hidden" name="id" value="<?= $id ?>" />
+                        <button type="submit" class="btn btn-primary">edit</button>
                     </form>
                 </div>
                 <hr>
@@ -116,5 +162,6 @@ if(isset($_SESSION['old']['lvl'])) {
         </footer>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <!-- <script src="js/script.js"></script> -->
     </body>
 </html>

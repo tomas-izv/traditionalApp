@@ -12,8 +12,8 @@ if(!isset($_SESSION['user'])) {
 try {
     $connection = new \PDO(
       'mysql:host=localhost;dbname=pokemondatabase',
-      'pokemonuser',
-      'pokemonpassword',
+      'pokemon_user',
+      'pokemon_user',
       array(
         PDO::ATTR_PERSISTENT => true,
         PDO::MYSQL_ATTR_INIT_COMMAND => 'set names utf8')
@@ -26,35 +26,28 @@ try {
 $resultado = 0;
 $url = 'create.php?op=insertpokemon&result=' . $resultado;
 
-if(isset($_POST['name']) && isset($_POST['price']) ) {
+if(isset($_POST['name']) && isset($_POST['lvl']) && isset($_POST['type'])) {
     $name = $_POST['name'];
-    $type = $_POST['type'];
-    $weight = $_POST['weight'];
-    $height = $_POST['height'];
     $lvl = $_POST['lvl'];
+    $type = $_POST['type'];
     $ok = true;
     $name = trim($name);
+    $type = trim($type);
 
     if(strlen($name) < 2 || strlen($name) > 100) {
-        $ok = false;
-    }
-    if(strlen($type)  < 2 || strlen($type) > 100) {
-        $ok = false;
-    }
-    if(!(is_numeric($weight) && $weight >= 0 && $weight <= 1000000)) {
-        $ok = false;
-    }
-    if(!(is_numeric($height) && $height >= 0 && $height <= 1000000)) {
         $ok = false;
     }
     if(!(is_numeric($lvl) && $lvl >= 0 && $lvl <= 1000000)) {
         $ok = false;
     }
+    if(strlen($type) < 2 || strlen($type) > 100) {
+        $ok = false;
+    }
 
     if($ok) {
-        $sql = 'insert into pokemon (name, price) values (:name, :price)';
+        $sql = 'insert into pokemon (name, lvl, type) values (:name, :lvl, :type)';
         $sentence = $connection->prepare($sql);
-        $parameters = ['name' => $name, 'type' => $type, 'weight' => $weight, 'height' => $height, 'lvl' => $lvl];
+        $parameters = ['name' => $name, 'lvl' => $lvl, 'type'=> $type];
         foreach($parameters as $nombreParametro => $valorParametro) {
             $sentence->bindValue($nombreParametro, $valorParametro);
         }
@@ -69,10 +62,8 @@ if(isset($_POST['name']) && isset($_POST['price']) ) {
 }
 if($resultado == 0) {
     $_SESSION['old']['name'] = $name;
-    $_SESSION['old']['type'] = $type;
-    $_SESSION['old']['weight'] = $weight;
-    $_SESSION['old']['height'] = $height;
     $_SESSION['old']['lvl'] = $lvl;
+    $_SESSION['old']['type'] = $type;
 }
 
 header('Location: ' . $url);

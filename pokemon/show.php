@@ -5,9 +5,9 @@ error_reporting(E_ALL);
 
 try {
     $connection = new \PDO(
-      'mysql:host=localhost;dbname=productdatabase',
-      'productuser',
-      'productpassword',
+      'mysql:host=localhost;dbname=pokemondatabase',
+      'pokemon_user',
+      'pokemon_user',
       array(
         PDO::ATTR_PERSISTENT => true,
         PDO::MYSQL_ATTR_INIT_COMMAND => 'set names utf8')
@@ -86,20 +86,12 @@ $connection = null;
                         <?= $fila['name'] ?>
                     </div>
                     <div class="form-group">
-                        pokemon type:
-                        <?= $fila['type'] ?>
-                    </div>
-                    <div class="form-group">
-                        pokemon weight:
-                        <?= $fila['weight'] ?>
-                    </div>
-                    <div class="form-group">
-                        pokemon height:
-                        <?= $fila['height'] ?>
-                    </div>
-                    <div class="form-group">
                         pokemon lvl:
                         <?= $fila['lvl'] ?>
+                    </div>
+                    <div class="form-group">
+                        pokemon type:
+                        <?= $fila['type'] ?>
                     </div>
                     <div class="form-group">
                         <a href="./">back</a>
@@ -113,5 +105,6 @@ $connection = null;
         </footer>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <!-- <script src="js/script.js"></script> -->
     </body>
 </html>

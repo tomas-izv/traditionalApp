@@ -12,9 +12,9 @@ $user = $_SESSION['user'];
 
 try {
     $connection = new \PDO(
-      'mysql:host=localhost;dbname=productdatabase',
-      'productuser',
-      'productpassword',
+      'mysql:host=localhost;dbname=pokemondatabase',
+      'pokemon_user',
+      'pokemon_user',
       array(
         PDO::ATTR_PERSISTENT => true,
         PDO::MYSQL_ATTR_INIT_COMMAND => 'set names utf8')

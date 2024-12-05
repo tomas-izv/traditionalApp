@@ -1,20 +1,23 @@
-create database productdatabase
+create database pokemondatabase
     default character set utf8
     collate utf8_unicode_ci;
 
-use productdatabase;
+use pokemondatabase;
 
-create table product (
+create table pokemon (
   id bigint(20) not null auto_increment primary key,
   name varchar(100) not null unique,
-  price decimal(9,2) not null
+  type varchar(100) not null,
+  weight decimal(9,2) not null,
+  height decimal(9,2) not null,
+  lvl int not null
 ) engine=innodb default charset=utf8 collate=utf8_unicode_ci;
 
-create user productuser@localhost
-    identified by 'productpassword';
+create user pokemon_user@localhost
+    identified by 'pokemon_user';
 
 grant all
-    on productdatabase.*
-    to productuser@localhost;
+    on pokemondatabase.*
+    to pokemon_user@localhost;
 
 flush privileges;

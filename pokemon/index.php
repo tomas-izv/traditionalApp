@@ -12,9 +12,9 @@ if(isset($_SESSION['user'])) {
 
 try {
     $connection = new PDO(
-      'mysql:host=localhost;dbname=productdatabase',
-      'productuser',
-      'productpassword',
+      'mysql:host=localhost;dbname=pokemondatabase',
+      'pokemon_user',
+      'pokemon_user',
       array(
         PDO::ATTR_PERSISTENT => true,
         PDO::MYSQL_ATTR_INIT_COMMAND => 'set names utf8')
@@ -89,10 +89,8 @@ try {
                         <tr>
                             <th>id</th>
                             <th>name</th>
-                            <th>type</th>
-                            <th>weight</th>
-                            <th>height</th>
                             <th>lvl</th>
+                            <th>type</th>
                             <?php
                             if(isset($_SESSION['user'])) {
                                 ?>
@@ -109,9 +107,10 @@ try {
                             while($fila = $sentence->fetch()) {
                                 ?>
                                 <tr >
-                                    <td><?php echo $fila['name']; ?></td>
+                                    <td><?php echo $fila['id']; ?></td>
+                                    <td><?= $fila['name']; ?></td>
+                                    <td><?= $fila['lvl']; ?></td>
                                     <td><?= $fila['type']; ?></td>
-                                    <td><?= $fila['price']; ?></td>
                                     <?php
                                     //if(isset($_SESSION['user'])) {
                                     if(($user === 'even' && $fila['id'] % 2 == 0) || 
